@@ -4,7 +4,7 @@ import type { Event } from '../../types/types';
 export const eventsApi = createApi({
   reducerPath: 'eventsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000/api/',
+    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
@@ -16,7 +16,7 @@ export const eventsApi = createApi({
   tagTypes: ['Events', 'Bookings'],
   endpoints: (builder) => ({
     
-    // ✅ GET all events with optional filters
+    //  GET all events with optional filters
     getEvents: builder.query<Event[], { category?: string; date?: string; location?: string }>({
       query: (filters) => {
         const params = new URLSearchParams();
@@ -28,25 +28,25 @@ export const eventsApi = createApi({
       providesTags: ['Events'],
     }),
 
-    // ✅ GET single event by ID
+    //  GET single event by ID
     getEventById: builder.query<Event, number>({
       query: (id) => `events/${id}`,
       providesTags: ['Events'],
     }),
 
-    // ✅ GET single event by Slug (NEW)
+    //  GET single event by Slug (NEW)
     getEventBySlug: builder.query<Event, string>({
       query: (slug) => `events/slug/${slug}`,
       providesTags: ['Events'],
     }),
 
-    // ✅ GET Upcoming Events
+    //  GET Upcoming Events
     getUpcomingEvents: builder.query<Event[], void>({
       query: () => 'events?upcomingOnly=true',
       providesTags: ['Events'],
     }),
 
-    // ✅ CREATE Event
+    //  CREATE Event
     createEvent: builder.mutation<any, Partial<Event>>({
       query: (newEvent) => ({
         url: 'events',
@@ -56,7 +56,7 @@ export const eventsApi = createApi({
       invalidatesTags: ['Events'],
     }),
 
-    // ✅ UPDATE Event
+    //  UPDATE Event
     updateEvent: builder.mutation<any, { event_id: number; payload: Partial<Event> }>({
       query: ({ event_id, payload }) => ({
         url: `events/${event_id}`,
@@ -66,7 +66,7 @@ export const eventsApi = createApi({
       invalidatesTags: ['Events'],
     }),
 
-    // ✅ DELETE Event
+    //  DELETE Event
     deleteEvent: builder.mutation<any, number>({
       query: (eventId) => ({
         url: `events/${eventId}`,
@@ -75,7 +75,7 @@ export const eventsApi = createApi({
       invalidatesTags: ['Events'],
     }),
 
-    // ✅ Book an Event
+    //  Book an Event
     createBooking: builder.mutation<any, any>({
       query: (bookingData) => ({
         url: 'bookings',
@@ -90,7 +90,7 @@ export const eventsApi = createApi({
 export const {
   useGetEventsQuery,
   useGetEventByIdQuery,
-  useGetEventBySlugQuery, // ✅ New hook
+  useGetEventBySlugQuery, 
   useGetUpcomingEventsQuery,
   useCreateEventMutation,
   useUpdateEventMutation,

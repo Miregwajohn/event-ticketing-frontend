@@ -1,11 +1,9 @@
-// src/features/api/paymentsApi.ts
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const paymentsApi = createApi({
   reducerPath: "paymentsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/",
+    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
@@ -16,25 +14,25 @@ export const paymentsApi = createApi({
   }),
   tagTypes: ["Payments"],
   endpoints: (builder) => ({
-    // 🔍 GET all payments
+    //  GET all payments
     getPayments: builder.query<any[], void>({
       query: () => "payments",
       providesTags: ["Payments"],
     }),
 
-    // 🔍 GET payment by ID
+    //  GET payment by ID
     getPaymentById: builder.query<any, number>({
       query: (id) => `payments/${id}`,
       providesTags: ["Payments"],
     }),
 
-    // 🔍 GET payments for logged-in user
+    // GET payments for logged-in user
     getUserPayments: builder.query<any[], void>({
       query: () => "payments/me",
       providesTags: ["Payments"],
     }),
 
-    // ➕ CREATE a new payment (manual fallback mode)
+    //  CREATE a new payment (manual fallback mode)
     createPayment: builder.mutation<any, any>({
       query: (newPayment) => ({
         url: "payments",
@@ -44,7 +42,7 @@ export const paymentsApi = createApi({
       invalidatesTags: ["Payments"],
     }),
 
-    // ✏️ UPDATE payment status/details
+    // UPDATE payment status/details
     updatePayment: builder.mutation<any, { payment_id: number; payload: any }>({
       query: ({ payment_id, payload }) => ({
         url: `payments/${payment_id}`,
@@ -54,7 +52,7 @@ export const paymentsApi = createApi({
       invalidatesTags: ["Payments"],
     }),
 
-    // ❌ DELETE a payment
+    // DELETE a payment
     deletePayment: builder.mutation<any, number>({
       query: (paymentId) => ({
         url: `payments/${paymentId}`,
@@ -63,7 +61,7 @@ export const paymentsApi = createApi({
       invalidatesTags: ["Payments"],
     }),
 
-    // ✅ MPESA STK Push Trigger
+    //  MPESA STK Push Trigger
     initiateStkPush: builder.mutation<
       any,
       { phone: string; bookingId: number; amount: number }
@@ -84,5 +82,5 @@ export const {
   useCreatePaymentMutation,
   useUpdatePaymentMutation,
   useDeletePaymentMutation,
-  useInitiateStkPushMutation, // ✅ use this in PaymentForm.tsx
+  useInitiateStkPushMutation, 
 } = paymentsApi;

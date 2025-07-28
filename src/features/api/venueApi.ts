@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const venueApi = createApi({
   reducerPath: "venueApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/",
+    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {

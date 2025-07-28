@@ -16,7 +16,7 @@ interface SalesReport {
 export const salesApi = createApi({
   reducerPath: "salesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/sales",
+    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {

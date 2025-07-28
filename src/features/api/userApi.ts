@@ -5,7 +5,7 @@ import type { UpdateUserPayload } from '../../types/types';
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000/api/',
+    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
     prepareHeaders: (headers, api) => {
       const state = api.getState() as { auth: { token: string | null } };
       const token = state.auth.token;

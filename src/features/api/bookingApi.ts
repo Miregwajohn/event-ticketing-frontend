@@ -4,7 +4,7 @@ import type {  UserBooking } from "../../types/types";
 export const bookingsApi = createApi({
   reducerPath: "bookingsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/",
+    baseUrl: "https://event-ticketing-backend-b2b9.onrender.com/api/",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {

@@ -4,7 +4,7 @@ import type { VenueBooking } from "../../types/types";
 export const venueBookingApi = createApi({
   reducerPath: "venueBookingApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/venues", // Scoped to venue-related endpoints
+    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api', // Scoped to venue-related endpoints
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
