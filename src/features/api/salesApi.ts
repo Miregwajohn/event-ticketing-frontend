@@ -13,10 +13,16 @@ interface SalesReport {
   topEvents: TopEvent[];
 }
 
+// Dynamic base URL switch for local/dev
+const getBaseUrl = () =>
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000/api"
+    : "https://event-ticketing-backend-b2b9.onrender.com/api";
+
 export const salesApi = createApi({
   reducerPath: "salesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
+    baseUrl: getBaseUrl(),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
@@ -25,6 +31,7 @@ export const salesApi = createApi({
       return headers;
     },
   }),
+  
   endpoints: (builder) => ({
     getSalesReport: builder.query<SalesReport, void>({
       query: () => "/report",

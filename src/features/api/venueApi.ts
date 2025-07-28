@@ -1,9 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// Automatically switch between local and production backend
+const getBaseUrl = () =>
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000/api"
+    : "https://event-ticketing-backend-b2b9.onrender.com/api";
+
 export const venueApi = createApi({
   reducerPath: "venueApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
+    baseUrl: getBaseUrl(),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
@@ -12,6 +18,7 @@ export const venueApi = createApi({
       return headers;
     },
   }),
+  
   tagTypes: ["Venues"],
   endpoints: (builder) => ({
     //  GET all venues

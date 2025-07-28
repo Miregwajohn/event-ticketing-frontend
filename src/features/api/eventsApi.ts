@@ -1,14 +1,21 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Event } from '../../types/types'; 
 
+
+// Utility to get dynamic base URL
+const getBaseUrl = () =>
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000/api"
+    : "https://event-ticketing-backend-b2b9.onrender.com/api";
+
 export const eventsApi = createApi({
-  reducerPath: 'eventsApi',
+  reducerPath: "eventsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
+    baseUrl: getBaseUrl(),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
       }
       return headers;
     },

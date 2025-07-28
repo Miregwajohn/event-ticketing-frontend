@@ -1,10 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {  UserBooking } from "../../types/types";
 
+// Utility to get correct base URL based on environment
+const getBaseUrl = () =>
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000/api/"
+    : "https://event-ticketing-backend-b2b9.onrender.com/api/";
+
 export const bookingsApi = createApi({
   reducerPath: "bookingsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://event-ticketing-backend-b2b9.onrender.com/api/",
+    baseUrl: getBaseUrl(),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
@@ -15,7 +21,7 @@ export const bookingsApi = createApi({
   }),
   tagTypes: ["Bookings"],
   endpoints: (builder) => ({
-    //  GET all bookings 
+    // GET all bookings
     getBookings: builder.query<any[], void>({
       query: () => "bookings",
       providesTags: ["Bookings"],

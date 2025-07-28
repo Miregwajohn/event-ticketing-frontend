@@ -2,10 +2,16 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { User } from '../../types/types';
 import type { UpdateUserPayload } from '../../types/types';
 
+// Determine base URL based on hostname
+const getBaseUrl = () =>
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000/api"
+    : "https://event-ticketing-backend-b2b9.onrender.com/api";
+
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api',
+    baseUrl: getBaseUrl(),
     prepareHeaders: (headers, api) => {
       const state = api.getState() as { auth: { token: string | null } };
       const token = state.auth.token;
@@ -15,6 +21,7 @@ export const userApi = createApi({
       return headers;
     },
   }),
+  
   tagTypes: ['users', 'user'],
   endpoints: (builder) => ({
     // Auth: Register

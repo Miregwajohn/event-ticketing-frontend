@@ -1,10 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { VenueBooking } from "../../types/types";
 
+// Smart base URL switch
+const getBaseUrl = () =>
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000/api"
+    : "https://event-ticketing-backend-b2b9.onrender.com/api";
+
 export const venueBookingApi = createApi({
   reducerPath: "venueBookingApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://event-ticketing-backend-b2b9.onrender.com/api', // Scoped to venue-related endpoints
+    baseUrl: getBaseUrl(),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
@@ -13,6 +19,7 @@ export const venueBookingApi = createApi({
       return headers;
     },
   }),
+  
   tagTypes: ["VenueBookings"],
   endpoints: (builder) => ({
     //  GET all venue bookings — admin/debug
