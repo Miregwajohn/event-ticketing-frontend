@@ -1,19 +1,21 @@
-import { createSlice } from '@reduxjs/toolkit';            
-import type { PayloadAction } from '@reduxjs/toolkit';      
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 interface Filters {
-  category: string;  // Category selected by the user (e.g., Music, Art)
-  date: string;      // Date selected by the user for filtering events
+  category: string;
+  date: string;
+  location: string; 
 }
 
 interface EventsState {
-  filters: Filters;  // The filters object to store user-selected filter values
+  filters: Filters;
 }
 
 const initialState: EventsState = {
   filters: {
-    category: '',  // Initially no category filter
-    date: '',      // Initially no date filter
+    category: '',
+    date: '',
+    location: '', 
   },
 };
 
@@ -21,14 +23,14 @@ const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
-    // Action to update filters
     setFilters: (state, action: PayloadAction<Filters>) => {
-      state.filters = action.payload;  // Set the new filters in Redux state
+      state.filters = action.payload;
+    },
+    setLocationFilter: (state, action: PayloadAction<string>) => {
+      state.filters.location = action.payload;
     },
   },
 });
 
-// Export the action to set filters
-export const { setFilters } = eventsSlice.actions;
-
+export const { setFilters, setLocationFilter } = eventsSlice.actions;
 export default eventsSlice.reducer;

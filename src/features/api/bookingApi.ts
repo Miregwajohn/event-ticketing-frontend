@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type {  UserBooking } from "../../types/types";
 
 export const bookingsApi = createApi({
   reducerPath: "bookingsApi",
@@ -25,6 +26,14 @@ export const bookingsApi = createApi({
       query: (id) => `bookings/${id}`,
       providesTags: ["Bookings"],
     }),
+
+    // GET bookings for the logged-in user (MyBookings)
+getUserBookings: builder.query<UserBooking[], void>({
+  query: () => "bookings/me",
+  providesTags: ["Bookings"],
+}),
+
+
 
     //  CREATE booking
     createBooking: builder.mutation<any, any>({
@@ -62,5 +71,6 @@ export const {
   useGetBookingByIdQuery,
   useCreateBookingMutation,
   useUpdateBookingMutation,
+    useGetUserBookingsQuery,
   useDeleteBookingMutation,
 } = bookingsApi;

@@ -26,6 +26,13 @@ export const supportApi = createApi({
       providesTags: ["Support"],
     }),
 
+    // 6 GET support tickets for current logged-in user
+getUserSupportTickets: builder.query<any[], void>({
+  query: () => "support-tickets/me",
+  providesTags: ["Support"],
+}),
+
+
     // 3 CREATE support ticket
     createSupportTicket: builder.mutation<any, any>({
       query: (ticketData) => ({
@@ -64,4 +71,5 @@ export const {
   useCreateSupportTicketMutation,
   useUpdateSupportTicketMutation,
   useDeleteSupportTicketMutation,
+    useGetUserSupportTicketsQuery,
 } = supportApi;

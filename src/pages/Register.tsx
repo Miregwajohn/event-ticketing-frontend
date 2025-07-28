@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-import  Footer  from "../component/common/Footer";
-import  Navbar  from "../component/common/Navbar";
-import loginImg from "../../src/assets/register.jpg";
+import Footer from "../component/common/Footer";
+import Navbar from "../component/common/Navbar";
+const loginImg = "https://res.cloudinary.com/dtuiikffe/image/upload/v1753580809/register_qfrhbj.webp";
 import { useForm } from "react-hook-form";
 import { userApi } from "../features/api/userApi";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "sonner";
-
 
 type UserRegisterFormValues = {
   firstname: string;
@@ -156,9 +155,7 @@ export const Register = () => {
                 {isLoading ? (
                   <span className="loading loading-spinner text-white"></span>
                 ) : (
-                  <>
-                    Register
-                  </>
+                  <>Register</>
                 )}
               </button>
 
@@ -172,16 +169,16 @@ export const Register = () => {
               </div>
             </form>
           </div>
-{/* Image Section */}
-<div className="hidden sm:block bg-gradient-to-tr from-blue-200 via-pink-100 to-white">
-    <div className="h-full flex items-center justify-center p-6">
-  <img
-    src={loginImg}
-    alt="Register"
-    className="w-full h-auto max-w-[600px] rounded-2xl object-contain"
-  />
-  </div>
-</div>
+          {/* Image Section */}
+          <div className="hidden sm:block bg-gradient-to-tr from-blue-200 via-pink-100 to-white">
+            <div className="h-full flex items-center justify-center p-6">
+              <img
+                src={loginImg}
+                alt="Register"
+                className="w-full h-auto max-w-[600px] rounded-2xl object-contain"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <Footer />

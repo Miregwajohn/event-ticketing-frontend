@@ -8,6 +8,7 @@ import {
   MapPin,
   LifeBuoy,
   CreditCard,
+   BadgeDollarSign, User
 } from "lucide-react";
 
 const AdminSidenav: React.FC = () => {
@@ -20,8 +21,8 @@ const AdminSidenav: React.FC = () => {
         </NavLink>
         <NavLink to="/dashboard/admin/allevents" className="flex items-center gap-2 text-gray-700 hover:text-green-700">
           <Ticket size={18} /> Events
-        </NavLink>
-        <NavLink to="/dashboard/admin/allvenues" className="flex items-center gap-2 text-gray-700 hover:text-green-700">
+          </NavLink>
+          <NavLink to="/dashboard/admin/allvenues" className="flex items-center gap-2 text-gray-700 hover:text-green-700">
           <MapPin size={18} /> Venues
         </NavLink>
         <NavLink to="/dashboard/admin/allbookings" className="flex items-center gap-2 text-gray-700 hover:text-green-700">
@@ -36,6 +37,14 @@ const AdminSidenav: React.FC = () => {
         <NavLink to="/dashboard/admin/allsupport" className="flex items-center gap-2 text-gray-700 hover:text-green-700">
           <LifeBuoy size={18} /> Support
         </NavLink>
+        <NavLink to="adminprofile" className="flex items-center gap-2 text-gray-700 hover:text-fuchsia-700 text-shadow-black">
+          <User size={18} /> MyProfile
+        </NavLink>
+                <NavLink to="/dashboard/admin/sales-report" className="flex items-center gap-2 text-gray-700 hover:text-fuchsia-700 text-shadow-black">
+                     <BadgeDollarSign size={18} />  SalesReport
+                  </NavLink>
+
+        
       </nav>
     </aside>
   );

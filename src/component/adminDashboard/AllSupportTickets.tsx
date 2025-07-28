@@ -3,7 +3,7 @@ import {
   useGetSupportTicketsQuery,
   useUpdateSupportTicketMutation,
   useDeleteSupportTicketMutation,
-} from "../../features/api/supportApi";
+} from "../../features/api/supportTicketApi";
 import Swal from "sweetalert2";
 import { ShieldQuestion, Loader2 } from "lucide-react";
 

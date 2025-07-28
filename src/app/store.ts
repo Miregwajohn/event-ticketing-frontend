@@ -7,9 +7,10 @@ import eventsReducer from "../features/events/eventsSlice";
 import { userApi } from "../features/api/userApi";
 import { eventsApi } from "../features/api/eventsApi";
 import { venueApi } from "../features/api/venueApi";
-import { supportApi } from '../features/api/supportApi';
+import { supportApi } from '../features/api/supportTicketApi';
 import { bookingsApi } from '../features/api/bookingApi';
 import { paymentsApi } from '../features/api/paymentsApi';
+import { salesApi } from '../features/api/salesApi';
 
 // Auth slice persist config
 const authPersistConfig = {
@@ -28,6 +29,7 @@ export const store = configureStore({
       [supportApi.reducerPath]:supportApi.reducer,
       [bookingsApi.reducerPath]:bookingsApi.reducer,
       [paymentsApi.reducerPath]:paymentsApi.reducer,
+      [salesApi.reducerPath]:salesApi.reducer,
 
     auth: persistedAuthReducer,             
     events: eventsReducer,                  
@@ -40,6 +42,7 @@ export const store = configureStore({
       .concat(supportApi.middleware)
       .concat(bookingsApi.middleware)
       .concat(paymentsApi.middleware)
+      .concat(salesApi.middleware)
 });
 
 export const persistor = persistStore(store);

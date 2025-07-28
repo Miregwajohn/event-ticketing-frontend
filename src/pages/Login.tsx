@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import  Footer  from "../component/common/Footer";
-import  Navbar  from "../component/common/Navbar";
-import loginImg from "../../src/assets/register.jpg";
+import Footer from "../component/common/Footer";
+import Navbar from "../component/common/Navbar";
+const loginImg = "https://res.cloudinary.com/dtuiikffe/image/upload/v1753580809/register_qfrhbj.webp";
 import { useForm } from "react-hook-form";
 import { Toaster, toast } from "sonner";
 import { userApi } from "../features/api/userApi";
@@ -26,25 +26,33 @@ export const Login = () => {
 
   const [loginUser, { isLoading }] = userApi.useLoginUserMutation();
 
-  const onSubmit = async (data: UserLoginFormValues) => {
-    const loadingToastId = toast.loading("Logging you in...");
-    try {
-      const res = await loginUser(data).unwrap();
-      dispatch(setCredentials(res));
-      toast.success(res?.message, { id: loadingToastId });
+const onSubmit = async (data: UserLoginFormValues) => {
+  const loadingToastId = toast.loading("Logging you in...");
+  try {
+    const res = await loginUser(data).unwrap();
+    dispatch(setCredentials({
+      user: res.user,
+      token: res.token,
+      userRole: res.user.role,
+    }));
+    localStorage.setItem("token", res.token);
+    localStorage.setItem("user", JSON.stringify(res.user)); // make sure this is also set
 
-      if (res.userType === "admin") {
-        navigate("/admindashboard/analytics");
-      } else {
-        navigate("/dashboard/me");
-      }
-    } catch (err: any) {
-      toast.error(
-        "Login failed: " + (err.data?.message || err.message || err.error || err)
-      );
-      toast.dismiss(loadingToastId);
+    toast.success(res?.message, { id: loadingToastId });
+
+      if (res.user.role === "admin") {
+      navigate("/dashboard/admin/analytics");
+    } else {
+      navigate("/dashboard/me");
     }
-  };
+  } catch (err: any) {
+    toast.error(
+      "Login failed: " + (err.data?.message || err.message || err.error || err)
+    );
+    toast.dismiss(loadingToastId);
+  }
+};
+
 
   return (
     <>
@@ -99,15 +107,12 @@ export const Login = () => {
               {/* Login Button */}
               <button
                 type="submit"
-  className="btn bg-info text-white border-none hover:bg-amber-600 transition-colors btn-block mt-4 shadow-md hover:scale-105"
+                className="btn bg-info text-white border-none hover:bg-amber-600 transition-colors btn-block mt-4 shadow-md hover:scale-105"
               >
                 {isLoading ? (
                   <span className="loading loading-spinner text-blue-500"></span>
                 ) : (
-                  <>
-                    
-                    Login
-                  </>
+                  <>Login</>
                 )}
               </button>
 
@@ -123,7 +128,7 @@ export const Login = () => {
 
               <div className="mt-4 text-center">
                 <Link to="/" className="text-blue-500 hover:underline">
-                   Go to Homepage
+                  Go to Homepage
                 </Link>
               </div>
             </form>

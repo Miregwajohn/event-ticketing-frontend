@@ -1,19 +1,19 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { User } from '../../types/types';
+import type { UpdateUserPayload } from '../../types/types';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:5000/api/',
-prepareHeaders: (headers, api) => {
-  const state = api.getState() as { auth: { token: string | null } };
-  const token = state.auth.token;
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
-  return headers;
-},
-
-
+    prepareHeaders: (headers, api) => {
+      const state = api.getState() as { auth: { token: string | null } };
+      const token = state.auth.token;
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   tagTypes: ['users', 'user'],
   endpoints: (builder) => ({
@@ -35,36 +35,45 @@ prepareHeaders: (headers, api) => {
       }),
     }),
 
-    // Fetch single user
-    getUserById: builder.query({
-      query: (user_id: number) => `users/${user_id}`,
+    // NEW: Fetch the currently authenticated user
+    getCurrentUser: builder.query<User, void>({
+      query: () => 'users/me',
       providesTags: ['user'],
     }),
 
+    // Fetch single user by ID (admin or self)
+    getUserById: builder.query<User, number>({
+      query: (userId) => `users/${userId}`,
+      providesTags: ['user'],
+    }),
+
+    //Fetch user infor
+    getUserProfile: builder.query<User, number>({
+  query: (userId) => `users/${userId}`,
+  providesTags: ['user'],
+}),
+
+
     // Fetch all users (admin only)
-    getAllUsersProfiles: builder.query({
+    getAllUsersProfiles: builder.query<User[], void>({
       query: () => 'users',
       providesTags: ['users'],
     }),
 
-    // Get specific user profile (self or admin)
-    getUserProfile: builder.query({
-      query: (userId: number) => `users/${userId}`,
-      providesTags: ['user'],
-    }),
+ // Update user profile
+ 
+updateUserProfile: builder.mutation<User, UpdateUserPayload>({
+  query: ({ user_id, ...patch }) => ({
+    url: `users/${user_id}`,
+    method: 'PUT',
+    body: patch,
+  }),
+  invalidatesTags: ['user', 'users'], // if you're using cache tags
+}),
 
-    // Update user
-    updateUserProfile: builder.mutation({
-      query: ({ user_id, ...patch }) => ({
-        url: `users/${user_id}`,
-        method: 'PUT',
-        body: patch,
-      }),
-      invalidatesTags: ['user', 'users'],
-    }),
 
     // Update profile image (optional)
-    updateUserProfileImage: builder.mutation({
+    updateUserProfileImage: builder.mutation<{ user: User }, { user_id: number; profile_picture: string }>({
       query: ({ user_id, profile_picture }) => ({
         url: `users/${user_id}`,
         method: 'PUT',
@@ -73,23 +82,23 @@ prepareHeaders: (headers, api) => {
       invalidatesTags: ['user', 'users'],
     }),
 
-    // Delete user
-    deleteUserProfile: builder.mutation({
-      query: (user_id) => ({
-        url: `users/${user_id}`,
+    // Delete user profile
+    deleteUserProfile: builder.mutation<void, number>({
+      query: (userId) => ({
+        url: `users/${userId}`,
         method: 'DELETE',
       }),
     }),
   }),
 });
 
-// Export hooks
 export const {
-  useLoginUserMutation,
   useRegisterUserMutation,
+  useLoginUserMutation,
+  useGetCurrentUserQuery,
   useGetUserByIdQuery,
+   useGetUserProfileQuery,
   useGetAllUsersProfilesQuery,
-  useGetUserProfileQuery,
   useUpdateUserProfileMutation,
   useUpdateUserProfileImageMutation,
   useDeleteUserProfileMutation,

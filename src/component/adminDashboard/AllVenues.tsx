@@ -8,6 +8,7 @@ import {
 import { Building2, Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import Swal from "sweetalert2";
 import Modal from "react-modal";
+import type { Venue } from "../../types/types";
 
 Modal.setAppElement("#root");
 
@@ -18,14 +19,16 @@ const AllVenues: React.FC = () => {
   const [deleteVenue] = useDeleteVenueMutation();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [newVenue, setNewVenue] = useState({
-    name: "",
-    address: "",
-    capacity: 0,
-  });
+  // align newVenue fields with Venue type
+  const [newVenue, setNewVenue] = useState<{
+    name: string;
+    address: string;
+    capacity: number;
+  }>({ name: "", address: "", capacity: 0 });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingVenue, setEditingVenue] = useState<any>(null);
+  // use Partial<Venue> so fields can be edited before save
+  const [editingVenue, setEditingVenue] = useState<Partial<Venue> | null>(null);
 
   // Open/close handlers
   const openCreateModal = () => {
@@ -34,7 +37,7 @@ const AllVenues: React.FC = () => {
   };
   const closeCreateModal = () => setIsCreateModalOpen(false);
 
-  const openEditModal = (venue: any) => {
+  const openEditModal = (venue: Venue) => {
     setEditingVenue(venue);
     setIsEditModalOpen(true);
   };
@@ -44,45 +47,40 @@ const AllVenues: React.FC = () => {
   };
 
   // Create venue
- const handleCreateVenue = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleCreateVenue = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedName = newVenue.name.trim();
+    const trimmedAddress = newVenue.address.trim();
+    const validCapacity = Number(newVenue.capacity);
 
-  const trimmedName = newVenue.name.trim();
-  const trimmedAddress = newVenue.address.trim();
-  const validCapacity = Number(newVenue.capacity);
+    if (!trimmedName || !trimmedAddress || validCapacity <= 0) {
+      Swal.fire("Validation", "All fields are required", "warning");
+      return;
+    }
 
-  console.log("🚀 Submit triggered with:", {
-    name: trimmedName,
-    address: trimmedAddress,
-    capacity: validCapacity,
-  });
-
-  if (!trimmedName || !trimmedAddress || validCapacity <= 0) {
-    Swal.fire("Validation", "All fields are required", "warning");
-    return;
-  }
-
-  try {
-    await createVenue({
-      name: trimmedName,
-      address: trimmedAddress,
-      capacity: validCapacity,
-    }).unwrap();
-    Swal.fire("Success", "Venue created successfully", "success");
-    closeCreateModal();
-    refetch();
-  } catch {
-    Swal.fire("Error", "Failed to create venue", "error");
-  }
-};
-
+    try {
+      await createVenue({
+        name: trimmedName,
+        address: trimmedAddress,
+        capacity: validCapacity,
+      }).unwrap();
+      Swal.fire("Success", "Venue created successfully", "success");
+      closeCreateModal();
+      refetch();
+    } catch {
+      Swal.fire("Error", "Failed to create venue", "error");
+    }
+  };
 
   // Update venue
   const handleUpdateVenue = async () => {
-    if (!editingVenue) return;
+    if (!editingVenue || !editingVenue.venueId) return; 
     const { venueId, name, address, capacity } = editingVenue;
     try {
-      await updateVenue({ venue_id: venueId, payload: { name, address, capacity } }).unwrap();
+      await updateVenue({
+          venue_id: venueId, 
+        payload: { name, address, capacity },
+      }).unwrap();
       Swal.fire("Updated", "Venue updated successfully", "success");
       closeEditModal();
       refetch();
@@ -145,8 +143,11 @@ const AllVenues: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {venues?.map((venue: any) => (
-              <tr key={venue.venueId} className="border-b bg-white hover:bg-gray-50 transition-colors">
+            {venues?.map((venue: Venue) => (
+              <tr
+                key={venue.venueId}
+                className="border-b bg-white hover:bg-gray-50 transition-colors"
+              >
                 <td className="p-2 text-gray-900 font-semibold">{venue.name}</td>
                 <td className="p-2 text-slate-800">{venue.address}</td>
                 <td className="p-2 text-indigo-700 font-bold">{venue.capacity}</td>
@@ -163,7 +164,7 @@ const AllVenues: React.FC = () => {
                     type="button"
                     className="btn btn-sm bg-red-600 text-white focus:outline-none"
                     title="Delete venue"
-                    onClick={() => handleDeleteVenue(venue.venueId)}
+                   onClick={() => handleDeleteVenue(Number(venue.venueId))}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -175,139 +176,177 @@ const AllVenues: React.FC = () => {
       )}
 
       {/* Create Venue Modal */}
-<Modal
-  isOpen={isCreateModalOpen}
-  onRequestClose={closeCreateModal}
-  className="bg-white rounded-lg shadow-lg max-w-lg mx-auto p-6 mt-20 outline-none"
-  overlayClassName="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center"
->
-  <h3 className="text-lg font-bold mb-4 text-blue-700">Add New Venue</h3>
-  <form className="grid grid-cols-1 gap-3" onSubmit={handleCreateVenue}>
-    
-    {/* Name Field */}
-    <label className="form-control w-full">
-      <div className="label">
-        <span className="label-text font-semibold text-gray-700">Name</span>
-      </div>
-      <input
-        autoFocus
-        className="input input-bordered w-full"
-        placeholder="Enter venue name"
-        value={newVenue.name}
-        onChange={(e) => setNewVenue({ ...newVenue, name: e.target.value })}
-      />
-    </label>
+      <Modal
+        isOpen={isCreateModalOpen}
+        onRequestClose={closeCreateModal}
+        className="bg-white rounded-lg shadow-lg max-w-lg mx-auto p-6 mt-20 outline-none"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+      >
+        <h3 className="text-lg font-bold mb-4 text-blue-700">Add New Venue</h3>
+        <form className="grid grid-cols-1 gap-3" onSubmit={handleCreateVenue}>
+          {/* Name Field */}
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text font-semibold text-gray-700">Name</span>
+            </div>
+            <input
+              autoFocus
+              className="input input-bordered w-full"
+              placeholder="Enter venue name"
+              value={newVenue.name}
+              onChange={(e) =>
+                setNewVenue({ ...newVenue, name: e.target.value })
+              }
+            />
+          </label>
 
-    {/* Address Field */}
-    <label className="form-control w-full">
-      <div className="label">
-        <span className="label-text font-semibold text-gray-700">Address</span>
-      </div>
-      <textarea
-        className="textarea  text-black-900 font-medium"
-        placeholder="Enter venue address"
-        rows={3}
-        value={newVenue.address}
-        onChange={(e) => setNewVenue({ ...newVenue, address: e.target.value })}
-      />
-    </label>
+          {/* Location Field */}
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text font-semibold text-gray-700">
+                Address
+              </span>
+            </div>
+            <textarea
+              className="textarea text-black-900 font-medium"
+              placeholder="Enter venue address"
+              rows={3}
+              value={newVenue.address}
+              onChange={(e) =>
+                setNewVenue({ ...newVenue, address: e.target.value })
+              }
+            />
+          </label>
 
-    {/* Capacity Field */}
-    <label className="form-control w-full">
-      <div className="label">
-        <span className="label-text font-semibold text-gray-700">Capacity</span>
-      </div>
-      <input
-        type="number"
-        className="input input-bordered"
-        placeholder="Enter venue capacity"
-        value={newVenue.capacity}
-        onChange={(e) => setNewVenue({ ...newVenue, capacity: parseInt(e.target.value) })}
-      />
-    </label>
+          {/* Capacity Field */}
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text font-semibold text-gray-700">
+                Capacity
+              </span>
+            </div>
+            <input
+              type="number"
+              className="input input-bordered"
+              placeholder="Enter venue capacity"
+              value={newVenue.capacity}
+              onChange={(e) =>
+                setNewVenue({
+                  ...newVenue,
+                  capacity: parseInt(e.target.value) || 0,
+                })
+              }
+            />
+          </label>
 
-    {/* Action Buttons */}
-    <div className="flex justify-end gap-2 mt-4">
-      <button type="button" className="btn btn-outline" onClick={closeCreateModal}>
-        Cancel
-      </button>
-      <button type="submit" className="btn bg-blue-600 text-white">
-        Save Venue
-      </button>
-    </div>
-  </form>
-</Modal>
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={closeCreateModal}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn bg-blue-600 text-white">
+              Save Venue
+            </button>
+          </div>
+        </form>
+      </Modal>
 
-     {/* Edit Venue Modal */}
-<Modal
-  isOpen={isEditModalOpen}
-  onRequestClose={closeEditModal}
-  className="bg-white rounded-lg shadow-lg max-w-lg mx-auto p-6 mt-20 outline-none"
-  overlayClassName="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center"
->
-  <h3 className="text-lg font-bold mb-4 text-blue-700">Edit Venue</h3>
-  {editingVenue && (
-    <form className="grid grid-cols-1 gap-3">
-      {/* Name Field */}
-      <label className="form-control w-full">
-        <div className="label">
-          <span className="label-text font-semibold text-gray-700">Name</span>
-        </div>
-        <input
-          className="input input-bordered w-full"
-          placeholder="Enter venue name"
-          value={editingVenue.name}
-          onChange={(e) =>
-            setEditingVenue({ ...editingVenue, name: e.target.value })
-          }
-        />
-      </label>
+      {/* Edit Venue Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onRequestClose={closeEditModal}
+        className="bg-white rounded-lg shadow-lg max-w-lg mx-auto p-6 mt-20 outline-none"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+      >
+        <h3 className="text-lg font-bold mb-4 text-blue-700">Edit Venue</h3>
+        {editingVenue && (
+          <form className="grid grid-cols-1 gap-3">
+            {/* Name Field */}
+            <label className="form-control w-full">
+              <div className="label">
+                <span className="label-text font-semibold text-gray-700">
+                  Name
+                </span>
+              </div>
+              <input
+                className="input input-bordered w-full"
+                placeholder="Enter venue name"
+                value={editingVenue.name || ""}
+                onChange={(e) =>
+                  setEditingVenue({
+                    ...editingVenue,
+                    name: e.target.value,
+                  })
+                }
+              />
+            </label>
 
-      {/* Address Field */}
-      <label className="form-control w-full">
-        <div className="label">
-          <span className="label-text font-semibold text-gray-700">Address</span>
-        </div>
-        <textarea
-          className="textarea textarea-bordered text-black-200 font-medium"
-          placeholder="Enter venue address"
-          rows={3}
-          value={editingVenue.address}
-          onChange={(e) =>
-            setEditingVenue({ ...editingVenue, address: e.target.value })
-          }
-        />
-      </label>
+            {/* Location Field */}
+            <label className="form-control w-full">
+              <div className="label">
+                <span className="label-text font-semibold text-gray-700">
+                  Address
+                </span>
+              </div>
+              <textarea
+                className="textarea textarea-bordered text-black-200 font-medium"
+                placeholder="Enter venue address"
+                rows={3}
+                value={editingVenue.address || ""}
+                onChange={(e) =>
+                  setEditingVenue({
+                    ...editingVenue,
+                    address: e.target.value,
+                  })
+                }
+              />
+            </label>
 
-      {/* Capacity Field */}
-      <label className="form-control w-full">
-        <div className="label">
-          <span className="label-text font-semibold text-gray-700">Capacity</span>
-        </div>
-        <input
-          type="number"
-          className="input input-bordered"
-          placeholder="Enter venue capacity"
-          value={editingVenue.capacity}
-          onChange={(e) =>
-            setEditingVenue({ ...editingVenue, capacity: parseInt(e.target.value) })
-          }
-        />
-      </label>
+            {/* Capacity Field */}
+            <label className="form-control w-full">
+              <div className="label">
+                <span className="label-text font-semibold text-gray-700">
+                  Capacity
+                </span>
+              </div>
+              <input
+                type="number"
+                className="input input-bordered"
+                placeholder="Enter venue capacity"
+                value={editingVenue.capacity ?? ""}
+                onChange={(e) =>
+                  setEditingVenue({
+                    ...editingVenue,
+                    capacity: parseInt(e.target.value) || 0,
+                  })
+                }
+              />
+            </label>
 
-      {/* Action Buttons */}
-      <div className="flex justify-end gap-2 mt-4">
-        <button type="button" className="btn btn-outline" onClick={closeEditModal}>
-          Cancel
-        </button>
-        <button type="button" className="btn bg-blue-600 text-white" onClick={handleUpdateVenue}>
-          Save Changes
-        </button>
-      </div>
-    </form>
-  )}
-</Modal>
-
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={closeEditModal}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn bg-blue-600 text-white"
+                onClick={handleUpdateVenue}
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 };
