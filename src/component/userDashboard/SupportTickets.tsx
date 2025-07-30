@@ -15,29 +15,29 @@ export default function SupportTickets() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!subject.trim() || !message.trim()) {
-    Swal.fire("Missing Fields", "Please fill in both subject and message", "warning");
-    return;
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subject.trim() || !message.trim()) {
+      Swal.fire("Missing Fields", "Please fill in both subject and message", "warning");
+      return;
+    }
 
-  try {
-    await createTicket({ subject, description: message }).unwrap();
-    Swal.fire("Ticket Submitted", "Your support ticket has been sent successfully", "success");
-    setSubject(""); setMessage("");
-    setIsOpen(false);
-    refetch();
-  } catch (err) {
-    Swal.fire("Submission Failed", "Something went wrong. Please try again.", "error");
-  }
-};
-
+    try {
+      await createTicket({ subject, description: message }).unwrap();
+      Swal.fire("Ticket Submitted", "Your support ticket has been sent successfully", "success");
+      setSubject("");
+      setMessage("");
+      setIsOpen(false);
+      refetch();
+    } catch (err) {
+      Swal.fire("Submission Failed", "Something went wrong. Please try again.", "error");
+    }
+  };
 
   return (
     <section className="max-w-4xl mx-auto space-y-6 px-4 py-6">
       {/* Header */}
-      <header className="flex justify-between items-center">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
             <LifeBuoy size={20} /> Support Tickets
@@ -46,13 +46,13 @@ const handleSubmit = async (e: React.FormEvent) => {
             Track and submit support requests
           </p>
         </div>
-        <button onClick={() => setIsOpen(true)} className="btn btn-primary">
+        <button onClick={() => setIsOpen(true)} className="btn btn-primary w-full sm:w-auto">
           Create New Ticket
         </button>
       </header>
 
       {/* Modal Form */}
-      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-2">
         <Dialog.Panel className="bg-white dark:bg-gray-800 p-6 rounded max-w-md w-full shadow-lg space-y-4">
           <Dialog.Title className="text-lg font-bold">Submit a Support Ticket</Dialog.Title>
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -72,11 +72,11 @@ const handleSubmit = async (e: React.FormEvent) => {
               onChange={(e) => setMessage(e.target.value)}
               required
             />
-            <div className="flex justify-end gap-2 pt-2">
-              <button type="button" className="btn btn-outline" onClick={() => setIsOpen(false)}>
+            <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2">
+              <button type="button" className="btn btn-outline w-full sm:w-auto" onClick={() => setIsOpen(false)}>
                 Cancel
               </button>
-              <button type="submit" className="btn btn-success" disabled={sending}>
+              <button type="submit" className="btn btn-success w-full sm:w-auto" disabled={sending}>
                 {sending ? "Sending..." : "Submit"}
               </button>
             </div>
@@ -99,7 +99,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           >
             <h3 className="text-lg font-semibold text-purple-600">{ticket.subject}</h3>
             <p className="text-sm text-gray-700 dark:text-gray-300">{ticket.description}</p>
-            <div className="flex justify-between items-center text-sm text-gray-500">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm text-gray-500 gap-1 sm:gap-0">
               <span>Status: <span className="font-medium">{ticket.status}</span></span>
               <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
             </div>

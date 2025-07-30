@@ -3,10 +3,11 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../app/store";
 import { clearCredentials } from "../../features/auth/authSlice";
-import { FaBell, FaSignOutAlt } from "react-icons/fa";
+import { FaBell, FaSignOutAlt, FaBars } from "react-icons/fa";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -19,105 +20,166 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-amber-400 shadow-md px-4 sm:px-10 sticky top-0 z-50">
-      {/* Left – Logo */}
-      <div className="flex-1">
-        <Link to="/" className="text-2xl font-bold text-fuchsia-600">
-          TicketKenya
-        </Link>
-      </div>
+    <>
+      <div className="navbar bg-amber-400 shadow-md px-4 sm:px-10 sticky top-0 z-50 flex items-center justify-between">
+        {/* Left – Logo */}
+        <div className="flex-1">
+          <Link to="/" className="text-2xl font-bold text-fuchsia-600">
+            TicketKenya
+          </Link>
+        </div>
 
-      {/* Center – Navigation Links */}
-      <div className="hidden md:flex flex-1 justify-center">
-        <ul className="menu menu-horizontal px-1 text-sm font-medium text-gray-700">
-          <li>
-            <NavLink to="/" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
-              Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/events" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
-              Events
-            </NavLink>
-          </li>
-           <li>
-            <NavLink to="/about" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
-            About            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/contact" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
-              Contact
-            </NavLink>
-          </li>
-        </ul>
-      </div>
+      {/* Hamburger – Only on small screens */}
+<div className="md:hidden">
+  <button
+    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+    className="text-xl text-fuchsia-700"
+    aria-label="Toggle navigation menu"
+    title="Toggle navigation menu"
+  >
+    <FaBars />
+  </button>
+</div>
 
-      {/* Right – Auth and Actions */}
-      <div className="flex items-center gap-4">
-        {/* 🔒 Not logged in */}
-        {!isAuthenticated ? (
+
+        {/* Center – Navigation Links (Desktop only) */}
+        <div className="hidden md:flex flex-1 justify-center">
           <ul className="menu menu-horizontal px-1 text-sm font-medium text-gray-700">
             <li>
-              <NavLink to="/register" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
-                Register
+              <NavLink to="/" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
+                Home
               </NavLink>
             </li>
             <li>
-              <NavLink to="/login" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
-                Login
+              <NavLink to="/events" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
+                Events
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/about" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
+                About
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/contact" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
+                Contact
               </NavLink>
             </li>
           </ul>
-        ) : (
-          <div className="relative flex items-center gap-4">
-            {/*  Notification Bell */}
-            <button
-              type="button"
-              aria-label="Notifications"
-              title="Notifications"
-              className="btn btn-ghost text-xl text-green-800 hover:text-fuchsia-600"
-            >
-              <FaBell />
-            </button>
+        </div>
 
-            {/*  User Dropdown */}
-            <div className="dropdown dropdown-end">
+        {/* Right – Auth and Actions (Desktop only) */}
+        <div className="hidden md:flex items-center gap-4">
+          {!isAuthenticated ? (
+            <ul className="menu menu-horizontal px-1 text-sm font-medium text-gray-700">
+              <li>
+                <NavLink to="/register" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
+                  Register
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/login" className={({ isActive }) => isActive ? "text-fuchsia-600 font-semibold" : ""}>
+                  Login
+                </NavLink>
+              </li>
+            </ul>
+          ) : (
+            <div className="relative flex items-center gap-4">
               <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="btn btn-sm bg-white px-3 rounded-md text-green-800 font-semibold hover:bg-fuchsia-100"
+                type="button"
+                aria-label="Notifications"
+                title="Notifications"
+                className="btn btn-ghost text-xl text-green-800 hover:text-fuchsia-600"
               >
-                Hey, {user?.firstname}
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <FaBell />
               </button>
 
-              {dropdownOpen && (
-                <ul className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md z-[999] text-sm text-gray-800 py-2">
-                  <li>
-                    <Link
-                      to={user?.role === "admin" ? "/dashboard/admin" : "/dashboard/me"}
-                      className="block px-4 py-2 hover:bg-fuchsia-100"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      Dashboard
-                    </Link>
-                  </li>
-                  <li>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-100 flex items-center gap-2"
-                    >
-                      <FaSignOutAlt /> Logout
-                    </button>
-                  </li>
-                </ul>
-              )}
+              <div className="dropdown dropdown-end">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="btn btn-sm bg-white px-3 rounded-md text-green-800 font-semibold hover:bg-fuchsia-100"
+                >
+                  Hey, {user?.firstname}
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {dropdownOpen && (
+                  <ul className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md z-[999] text-sm text-gray-800 py-2">
+                    <li>
+                      <Link
+                        to={user?.role === "admin" ? "/dashboard/admin" : "/dashboard/me"}
+                        className="block px-4 py-2 hover:bg-fuchsia-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-100 flex items-center gap-2"
+                      >
+                        <FaSignOutAlt /> Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Menu Dropdown (Only visible if toggled) */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-amber-100 px-4 py-3 space-y-2 text-sm shadow-md">
+          <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className="block text-gray-800">
+            Home
+          </NavLink>
+          <NavLink to="/events" onClick={() => setMobileMenuOpen(false)} className="block text-gray-800">
+            Events
+          </NavLink>
+          <NavLink to="/about" onClick={() => setMobileMenuOpen(false)} className="block text-gray-800">
+            About
+          </NavLink>
+          <NavLink to="/contact" onClick={() => setMobileMenuOpen(false)} className="block text-gray-800">
+            Contact
+          </NavLink>
+
+          {!isAuthenticated ? (
+            <>
+              <NavLink to="/register" onClick={() => setMobileMenuOpen(false)} className="block text-gray-800">
+                Register
+              </NavLink>
+              <NavLink to="/login" onClick={() => setMobileMenuOpen(false)} className="block text-gray-800">
+                Login
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to={user?.role === "admin" ? "/dashboard/admin" : "/dashboard/me"}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-gray-800"
+              >
+                Dashboard
+              </NavLink>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="block text-left text-red-500"
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 

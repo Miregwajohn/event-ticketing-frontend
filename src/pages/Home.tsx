@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { RootState } from "../app/store";
 
-// ✅ Cloudinary illustration image instead of local asset
 const CLOUDINARY_ILLUSTRATION =
   "https://res.cloudinary.com/dtuiikffe/image/upload/v1753579935/EventIllustration_kp4jr0.jpg";
 
@@ -37,18 +36,18 @@ const Home = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-orange-50 to-amber-50 py-16 px-6">
+      <section className="bg-gradient-to-b from-orange-50 to-amber-50 py-12 sm:py-16 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div className="text-center md:text-left space-y-6">
             <motion.h1
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-4xl sm:text-5xl font-bold text-green-800"
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-800"
             >
               Discover and <span className="text-amber-300">Book Events</span> Easily
             </motion.h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-gray-600">
               Find upcoming concerts, conferences, and local meetups at your fingertips.
             </p>
             <Link
@@ -66,16 +65,16 @@ const Home = () => {
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="w-full max-w-lg object-contain rounded-xl shadow-xl"
+              className="w-full max-w-sm sm:max-w-md md:max-w-lg object-contain rounded-xl shadow-xl"
             />
           </div>
         </div>
       </section>
 
       {/* Filter Section */}
-      <section className="pt-16 pb-6 bg-white px-6">
+      <section className="pt-12 pb-6 bg-white px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-amber-600 mb-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-amber-600 mb-6 text-center">
             Filter Events
           </h2>
           <EventFilter />
@@ -83,9 +82,9 @@ const Home = () => {
       </section>
 
       {/* Featured Events */}
-      <section className="pt-8 pb-12 bg-white px-6">
+      <section className="pt-8 pb-12 bg-white px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-amber-600 mb-8 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-amber-600 mb-8 text-center">
             Featured Events
           </h2>
           {isLoading ? (
@@ -93,7 +92,7 @@ const Home = () => {
           ) : error ? (
             <p className="text-center text-red-500">Error loading filtered events.</p>
           ) : (
-            <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
               {events?.map((event) => (
                 <EventCard
                   key={event.eventId}
@@ -102,7 +101,7 @@ const Home = () => {
                   title={event.title}
                   date={event.date}
                   location={event.venue?.address || `Venue ID: ${event.venueId}`}
-                  image={event.image} // ✅ Must be a Cloudinary URL in backend
+                  image={event.image}
                   ticketPrice={event.ticketPrice}
                   ticketsSold={event.ticketsSold}
                   ticketsTotal={event.ticketsTotal}
@@ -114,9 +113,9 @@ const Home = () => {
       </section>
 
       {/* Upcoming Events */}
-      <section className="pt-8 pb-16 px-6 bg-gray-50">
+      <section className="pt-8 pb-16 px-4 sm:px-6 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-green-800 mb-8 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-green-800 mb-8 text-center">
             📅 Upcoming Events
           </h2>
           {loadingUpcoming ? (
@@ -133,7 +132,7 @@ const Home = () => {
                   title={event.title}
                   date={event.date}
                   location={event.venue?.address || "TBA"}
-                  image={event.image} // ✅ Must be a Cloudinary URL in backend
+                  image={event.image}
                   ticketPrice={event.ticketPrice}
                   ticketsSold={event.ticketsSold}
                   ticketsTotal={event.ticketsTotal}

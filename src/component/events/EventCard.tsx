@@ -37,16 +37,16 @@ const EventCard: React.FC<EventCardProps> = ({
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+    <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300 flex flex-col h-full">
       <div onClick={handleClick} className="cursor-pointer">
         <img
           src={image || DEFAULT_IMAGE}
           alt={title}
-          className="w-full h-40 object-cover rounded-md"
+          className="w-full h-40 sm:h-48 md:h-56 object-cover rounded-md"
         />
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-col flex-grow">
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="text-sm text-gray-500">{date}</p>
         <p className="text-sm text-gray-500">{location}</p>

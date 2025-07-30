@@ -22,16 +22,16 @@ const EventsList: React.FC = () => {
   return (
     <>
       <Navbar />
-      <section className="py-16 px-6 bg-white min-h-screen">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 bg-white min-h-screen">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-10 text-green-800">
+          <h1 className="text-3xl sm:text-4xl font-bold text-center mb-10 text-green-800">
             Browse Events
           </h1>
 
           <EventFilter />
 
           {isLoading ? (
-            <p className="text-center">Loading events...</p>
+            <p className="text-center text-gray-500">Loading events...</p>
           ) : error ? (
             <p className="text-center text-red-500">Error loading events</p>
           ) : Array.isArray(events) && events.length === 0 ? (
@@ -39,7 +39,7 @@ const EventsList: React.FC = () => {
               No events found for the selected filters.
             </p>
           ) : (
-            <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-6">
+            <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-6">
               {events?.map((event: Event) => (
                 <EventCard
                   key={event.eventId}

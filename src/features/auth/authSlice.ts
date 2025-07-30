@@ -26,6 +26,7 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
 
       localStorage.setItem("token", action.payload.token);
+      
     },
 
     clearCredentials: (state) => {

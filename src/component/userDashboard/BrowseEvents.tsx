@@ -17,7 +17,9 @@ const BrowseEvents: React.FC = () => {
 
   return (
     <section className="py-6 px-4 bg-white min-h-screen">
-      <h1 className="text-2xl font-bold text-green-800 mb-6">🎟️ Browse Events</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-green-800 mb-6 text-center sm:text-left">
+        🎟️ Browse Events
+      </h1>
 
       <EventFilter />
 
@@ -35,7 +37,7 @@ const BrowseEvents: React.FC = () => {
             <EventCard
               key={event.eventId}
               eventId={event.eventId}
-              slug={event.slug} // ✅ Add this
+              slug={event.slug}
               title={event.title}
               date={event.date}
               location={event.venue?.address || `Venue ID: ${event.venueId}`}
